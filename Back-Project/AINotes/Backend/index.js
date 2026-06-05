@@ -1,6 +1,9 @@
 import express from "express"
-import dotenv from "dotenv"
-dotenv.config()
+import express from "express"
+if (process.env.NODE_ENV !== 'production') {
+    import dotenv from "dotenv"
+    dotenv.config()
+}
 import connectDb from "./utils/db.js"
 import authRouter from "./routes/auth.routes.js"
 import cookieParser from "cookie-parser"
