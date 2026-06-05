@@ -23,7 +23,7 @@ app.post(
 );
 
 app.use(cors({
-    origin: process.env.CLIENT_URL|| "https://ainotes-1-utqt.onrender.com",
+    origin: process.env.CLIENT_URL|| "https://ainotesfrontend.onrender.com",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
 }))
