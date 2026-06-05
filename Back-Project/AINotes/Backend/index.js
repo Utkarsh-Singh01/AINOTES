@@ -1,7 +1,6 @@
 import express from "express"
 import dotenv from "dotenv"
 
-// Only call config() in development
 if (process.env.NODE_ENV !== 'production') {
     dotenv.config()
 }
