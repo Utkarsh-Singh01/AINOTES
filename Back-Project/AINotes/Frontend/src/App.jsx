@@ -9,7 +9,7 @@ import Pricing from './pages/Pricing'
 import History from './pages/History'
 import PaymentSuccess from './pages/PaymentSuccess'
 import PaymentFailed from './pages/PaymentFailed'
-export const serverUrl = "https://ainotes-ju65.onrender.com"
+export const serverUrl = "https://ainotesbackend-q7if.onrender.com"
 
 function App() {
 
