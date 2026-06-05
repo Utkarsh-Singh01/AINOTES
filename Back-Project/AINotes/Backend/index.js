@@ -19,12 +19,12 @@ app.post(
     stripeWebhook
 );
 
-app.use(cors(
-    {origin: "https://ainotes-1-utqt.onrender.com",
+app.use(cors({
+    origin: process.env.CLIENT_URL|| "https://ainotes-1-utqt.onrender.com",
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-    }
-))
+}))
+
 app.use(express.json())
 app.use(cookieParser())
 const PORT = process.env.PORT || 5000
