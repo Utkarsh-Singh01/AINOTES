@@ -1,11 +1,10 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { serverUrl } from "../App";
 import { AnimatePresence, motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { GiHamburgerMenu } from "react-icons/gi";
 import FinalResult from "../components/FinalResult";
+import { getMyNotes, getSingleNote } from "../services/api";
 
 function History() {
   const [topics, setTopics] = useState([]);
@@ -20,11 +19,8 @@ function History() {
   useEffect(() => {
     const myNotes = async () => {
       try {
-        const res = await axios.get(serverUrl + "/api/notes/getnotes", {
-          withCredentials: true,
-        });
-        console.log(res.data);
-        setTopics(Array.isArray(res.data) ? res.data : []);
+        const data = await getMyNotes() 
+        setTopics(Array.isArray(data) ? data : []);
       } catch (error) {
         console.log(error);
       }
@@ -35,13 +31,9 @@ function History() {
   const openNotes = async (noteId) => {
     setLoading(true);
     setActiveNoteId(noteId)
-
     try {
-      const res = await axios.get(serverUrl + `/api/notes/${noteId}`, {
-        withCredentials: true,
-      });
-      setSelectedNote(res.data.content);
-
+      const data = await getSingleNote(noteId) 
+      setSelectedNote(data.content);
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -67,7 +59,6 @@ function History() {
           <h1 className="font-bold text-2xl bg-linear-to-r from-blue-300 via-blue-400 to-blue-500 bg-clip-text text-transparent">
             𝙀𝙭𝙖𝙖𝙢𝘿𝙤𝙨𝙩𝘼𝙄
           </h1>
-
           <p className="text-sm text-gray-300 mt-1">
             AI-powered notes that simplify complex topics, <br /> helping you
             learn faster and perform better in exams.
@@ -76,10 +67,7 @@ function History() {
 
         <div className="flex items-center gap-4 flex-wrap">
           {!isSidebarOpen && (
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden text-white text-2xl"
-            >
+            <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden text-white text-2xl">
               <GiHamburgerMenu />
             </button>
           )}
@@ -89,7 +77,6 @@ function History() {
           >
             <span className="text-xl">💎</span>
             <span>{credits}</span>
-
             <motion.span
               whileHover={{ scale: 1.2 }}
               whileTap={{ scale: 0.97 }}
@@ -111,10 +98,7 @@ function History() {
               transition={{ type: "spring", stiffness: 260, damping: 30 }}
               className="fixed lg:static top-0 left-0 z-50 lg:z-auto w-72 lg:w-auto h-full lg:h-[67vh] lg:rounded-3xl lg:col-span-1 bg-black/90 lg:bg-black/80 backdrop-blur-xl border border-white/10 shadow-[0_20px_45px_rgba(0,0,0,0.6)] p-5 overflow-y-auto"
             >
-              <button
-                onClick={() => setIsSidebarOpen(false)}
-                className="lg:hidden text-white mb-4 "
-              >
+              <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-white mb-4">
                 ⬅️ back
               </button>
 
@@ -125,13 +109,10 @@ function History() {
                 >
                   ➕ New Notes
                 </button>
-
                 <hr className="border-white/10 mb-4" />
-
                 <h2 className="mb-4 text-lg font-bold bg-gradient-to-r from-white via-gray-300 to-white bg-clip-text text-transparent">
                   📒 Your Notes
                 </h2>
-
                 {topics.length === 0 && (
                   <p className="text-sm text-gray-400">No notes created yet</p>
                 )}
@@ -140,31 +121,25 @@ function History() {
                     <li
                       key={i}
                       onClick={() => openNotes(t._id)}
-                      className={`cursor-pointer rounded-xl p-3 border transition-all
-                        ${activeNoteId === t._id
-                          ? "bg-indigo-500/30 border-indigo-400 shadow-[0_0_0_1px_rgba(99, 102, 241, 0.6)]"
+                      className={`cursor-pointer rounded-xl p-3 border transition-all ${
+                        activeNoteId === t._id
+                          ? "bg-indigo-500/30 border-indigo-400"
                           : "bg-white/5 border-white/10 hover:bg-white/10"
-                        }
-                        `}
+                      }`}
                     >
-                      <p className="text-sm text-white font-semibold">
-                        {t.topic}
-                      </p>
-
+                      <p className="text-sm text-white font-semibold">{t.topic}</p>
                       <div className="flex flex-wrap gap-2 mt-2 text-xs">
                         {t.classLevel && (
                           <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">
-                            ClassLevel: {t.classLevel}{" "}
+                            ClassLevel: {t.classLevel}
                           </span>
                         )}
-
                         {t.examType && (
                           <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300">
-                            {t.examType}{" "}
+                            {t.examType}
                           </span>
                         )}
                       </div>
-
                       <div className="flex mt-2 gap-3 text-xs text-gray-200">
                         {t.revisionMode && <span>⚡ Revision</span>}
                         {t.includeDiagram && <span>📊 Diagram</span>}
@@ -179,19 +154,18 @@ function History() {
         </AnimatePresence>
 
         <motion.div
-        initial={{ opacity: 0, y: -15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="lg:col-span-3 rounded-2xl bg-white shadow-[0_15px_40px_rgba(0,0,0,0.15)] p-6 min-h-[75vh]"
+          initial={{ opacity: 0, y: -15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="lg:col-span-3 rounded-2xl bg-white shadow-[0_15px_40px_rgba(0,0,0,0.15)] p-6 min-h-[75vh]"
         >
           {loading && <p className="text-center text-gray-500">Loading Notes...</p>}
-
           {!loading && !selectedNote && (
-            <div className="h-full flex items-center justify-center text-gray-400">Select a topic from Sidebar</div>
+            <div className="h-full flex items-center justify-center text-gray-400">
+              Select a topic from Sidebar
+            </div>
           )}
-
           {!loading && selectedNote && <FinalResult result={selectedNote} />}
-
         </motion.div>
       </div>
     </div>
